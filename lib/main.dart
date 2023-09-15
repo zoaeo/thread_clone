@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/main_navigation/main_navigation_screen.dart';
@@ -13,24 +13,27 @@ void main() async {
   final preferences = await SharedPreferences.getInstance();
   final repository = SettingConfigRepository(preferences);
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (context) => SettingConfigViewModel(repository),
-      )
-    ],
-    child: const ThreadApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: [
+        settingConfigProvider
+            .overrideWith(() => SettingConfigViewModel(repository))
+      ],
+      child: const ThreadApp(),
+    ),
+  );
 }
 
-class ThreadApp extends StatelessWidget {
+class ThreadApp extends ConsumerWidget {
   const ThreadApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Thread Clone',
-      themeMode: isDarkMode(context) ? ThemeMode.dark : ThemeMode.light,
+      themeMode: ref.watch(settingConfigProvider).darkmode
+          ? ThemeMode.dark
+          : ThemeMode.light,
       theme: ThemeData(
         textTheme: Typography.blackMountainView,
         brightness: Brightness.light,

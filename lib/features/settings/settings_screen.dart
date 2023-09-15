@@ -1,29 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:tiktok_clone/features/settings/privacy_screen.dart';
 import 'package:tiktok_clone/features/settings/setting_config_vm.dart';
 import 'package:tiktok_clone/utils.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
   void _onPrivacyPressed() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const PrivacyScreen(),
-      ),
-    );
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => const PrivacyScreen(),
+    //   ),
+    // );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -68,9 +62,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: isDarkMode(context) ? Colors.white : Colors.black),
           ),
           SwitchListTile.adaptive(
-            value: context.watch<SettingConfigViewModel>().darkmode,
+            value: ref.watch(settingConfigProvider).darkmode,
             onChanged: (value) =>
-                context.read<SettingConfigViewModel>().setDarkMode(value),
+                ref.read(settingConfigProvider.notifier).setDarkMode(value),
             title: const Text("Dark Mode"),
           ),
           const Divider(),
